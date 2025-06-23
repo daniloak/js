@@ -79,8 +79,7 @@ class ContactController {
 
     if (email) {
       const contactByEmail = await ContactsRepository.findByEmail(email);
-
-      if (!contactByEmail && contactByEmail.id !== id) {
+      if (contactByEmail && contactByEmail.id !== id) {
         return response
           .status(404)
           .json({ error: 'This e-mail is already in use' });
