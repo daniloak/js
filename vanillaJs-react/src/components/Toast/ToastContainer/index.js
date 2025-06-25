@@ -22,7 +22,6 @@ export default function ToastContainer() {
     toastEventManager.on('addtoast', handleAddToast);
 
     return () => {
-      console.log(toastEventManager);
       toastEventManager.removeListener('addtoast', handleAddToast);
     };
   }, [setMessages]);
