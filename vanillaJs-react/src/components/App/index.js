@@ -1,5 +1,5 @@
 import React from 'react';
-import Routes from '../../Routes';
+import Router from '../../Router';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
@@ -17,7 +17,7 @@ function App() {
         <ToastContainer />
         <Container>
           <Header></Header>
-          <Routes />
+          <Router />
         </Container>
       </ThemeProvider>
     </BrowserRouter>

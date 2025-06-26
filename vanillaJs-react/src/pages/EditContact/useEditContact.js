@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ContactsService from '../../services/ContactsService';
 import toast from '../../utils/toast';
 import useSafeAsyncAction from '../../hooks/useSafeAsyncAction';
@@ -7,7 +7,7 @@ import useSafeAsyncAction from '../../hooks/useSafeAsyncAction';
 export default function useEditContact() {
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
   const safeAsyncAction = useSafeAsyncAction();
 
   const contactFormRef = useRef(null);
@@ -28,7 +28,7 @@ export default function useEditContact() {
         }
 
         safeAsyncAction(() => {
-          history.push('/');
+          navigate('/', { replace: true });
           toast({
             type: 'danger',
             text: 'Contact not found',
@@ -42,7 +42,7 @@ export default function useEditContact() {
     return () => {
       controller.abort(); // Cancel the request if the component unmounts
     };
-  }, [id, history, safeAsyncAction]);
+  }, [id, navigate, safeAsyncAction]);
 
   async function handleSubmit(contact) {
     try {
