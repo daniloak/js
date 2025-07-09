@@ -1,6 +1,11 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always"
+    "source.fixAll": "always",
+    "source.fixAll.eslint": "always",
+    "source.addMissingImports": "always",
+    "source.sortImports": "always",
+    "source.removeUnusedImports": "always",
+    "source.organizeImports": "always"
   }
 }
