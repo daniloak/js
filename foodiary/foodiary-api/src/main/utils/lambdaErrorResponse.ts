@@ -16,5 +16,6 @@ export function lambdaErrorResponse({ code, message, statusCode }: ILambdaErrorR
         message: message,
       },
     }),
+    headers: { 'Content-Type': 'application/json' },
   };
 }

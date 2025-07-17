@@ -7,5 +7,14 @@
     "source.sortImports": "always",
     "source.removeUnusedImports": "always",
     "source.organizeImports": "always"
-  }
+  },
+  "material-icon-theme.folders.associations": {
+    "kernel": "core",
+    "usecases": "components",
+    "sls": "serverless",
+    "infra": "app",
+    "entities": "class",
+    "gateways": "plugin",
+    "adapters": "connection",
+  },
 }
