@@ -1,7 +1,7 @@
 import { Account } from '@application/entities/Account';
 
 export class AccountItem {
-  private readonly type = 'Account';
+  public static readonly type = 'Account';
   private readonly keys: AccountItem.Keys;
 
   constructor(private readonly attrs: AccountItem.Attributes) {
@@ -17,7 +17,7 @@ export class AccountItem {
     return {
       ...this.keys,
       ...this.attrs,
-      type: this.type,
+      type: AccountItem.type,
     };
   }
 
@@ -28,12 +28,12 @@ export class AccountItem {
     });
   }
 
-  static toEntity(account: AccountItem.ItemType) {
+  static toEntity(accountItem: AccountItem.ItemType) {
     return new Account({
-      id: account.id,
-      email: account.email,
-      externalId: account.externalId,
-      createdAt: new Date(account.createdAt),
+      id: accountItem.id,
+      email: accountItem.email,
+      externalId: accountItem.externalId,
+      createdAt: new Date(accountItem.createdAt),
     });
   }
 
