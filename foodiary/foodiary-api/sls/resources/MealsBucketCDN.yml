@@ -1,0 +1,88 @@
+Conditions:
+  ShouldSetupMealsCDNCustomDomain: !And
+    - !Not
+      - !Equals
+        - ${env:MEALS_CDN_DOMAIN_NAME, ''}
+        - ''
+    - !Not
+      - !Equals
+        - ${env:MEALS_CDN_CERTIFICATE_ARN, ''}
+        - ''
+    - !Not
+      - !Equals
+        - ${env:ROUTE_53_ZONE_ID, ''}
+        - ''
+
+Resources:
+  MealsCDNOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: MealsCDNOAC
+        Description: Access control for Meals S3 bucket
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  MealsBucketCDN:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Origins:
+          - Id: S3Origin
+            S3OriginConfig: {}
+            DomainName: !GetAtt MealsBucket.RegionalDomainName
+            OriginAccessControlId: !Ref MealsCDNOAC
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          Compress: true
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+        HttpVersion: http2and3
+        Aliases: !If
+          - ShouldSetupMealsCDNCustomDomain
+          -
+            - ${env:MEALS_CDN_DOMAIN_NAME, ''}
+          -
+            - !Ref AWS::NoValue
+        ViewerCertificate: !If
+          - ShouldSetupMealsCDNCustomDomain
+          -
+            AcmCertificateArn: ${env:MEALS_CDN_CERTIFICATE_ARN, ''}
+            MinimumProtocolVersion: TLSv1.2_2021
+            SslSupportMethod: sni-only
+          -
+            CloudFrontDefaultCertificate: true
+
+  MealsBucketCDNPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MealsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Id: PolicyForCloudFrontPrivateContent
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${MealsBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${MealsBucketCDN}'
+
+  MealsCDNCustomDomainDNSRecord:
+    Condition: ShouldSetupMealsCDNCustomDomain
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: ${env:ROUTE_53_ZONE_ID}
+      Name: ${env:MEALS_CDN_DOMAIN_NAME, ''}
+      Type: A
+      AliasTarget:
+        HostedZoneId: Z2FDTNDATAQYW2
+        DNSName: !GetAtt MealsBucketCDN.DomainName

@@ -4,6 +4,7 @@ statements:
       - dynamodb:PutItem
       - dynamodb:Query
       - dynamodb:GetItem
+      - dynamodb:UpdateItem
     Resource:
       - !GetAtt MainTable.Arn
       - !Sub '${MainTable.Arn}/index/*'
@@ -15,5 +16,11 @@ statements:
   - Effect: Allow
     Action:
       - s3:PutObject
+      - s3:GetObject
     Resource:
       - !Sub '${MealsBucket.Arn}/*'
+  - Effect: Allow
+    Action:
+      - sqs:SendMessage
+    Resource:
+      - !GetAtt MealsQueue.Arn

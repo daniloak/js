@@ -74,3 +74,6 @@ sls deploy
 sls deploy function -f [function]
 
 sls logs -f [function] -t (tail)
+
+News:
+ZodMini
