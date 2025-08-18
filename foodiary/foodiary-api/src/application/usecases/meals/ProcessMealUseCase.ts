@@ -1,7 +1,7 @@
 import { Meal } from '@application/entities/Meal';
 import { ResourceNotFound } from '@application/errors/application/ResourceNotFound';
+import { MealsAIGateway } from '@infra/ai/gateways/MealsAIGateway';
 import { MealRepository } from '@infra/database/dynamo/repositories/MealRepository';
-import { MealsAIGateway } from '@infra/gateways/MealsAIGateway';
 import { Injectable } from '@kernel/decorators/Injectable';
 
 const MAX_ATTEMPTS = 2;
@@ -46,7 +46,9 @@ export class ProcessMealUseCase {
       meal.name = name;
       meal.icon = icon;
       meal.foods = foods;
+
       await this.mealRepository.save(meal);
+
     } catch (error) {
       meal.status = meal.attempts >= MAX_ATTEMPTS
         ? Meal.Status.FAILED

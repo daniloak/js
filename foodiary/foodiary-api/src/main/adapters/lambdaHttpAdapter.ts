@@ -2,17 +2,21 @@ import { Controller } from '@application/contracts/Controller';
 import { ApplicationError } from '@application/errors/application/ApplicationError';
 import { ErrorCode } from '@application/errors/errorCode';
 import { HttpError } from '@application/errors/http/HttpError';
+import { Registry } from '@kernel/di/Registry';
 import { lambdaBodyParser } from '@main/utils/lambdaBodyParser';
 import { lambdaErrorResponse } from '@main/utils/lambdaErrorResponse';
+import { Constructor } from '@shared/types/Contructor';
 import { APIGatewayProxyEventV2, APIGatewayProxyEventV2WithJWTAuthorizer, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { ZodError } from 'zod';
 
 type Event = APIGatewayProxyEventV2 | APIGatewayProxyEventV2WithJWTAuthorizer;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function lambdaHttpAdapter(controller: Controller<any, unknown>) {
+export function lambdaHttpAdapter(controllerImpl: Constructor<Controller<any, unknown>>) {
   return async (event: Event): Promise<APIGatewayProxyResultV2> => {
     try {
+      const controller = Registry.getInstance().resolve(controllerImpl);
+
       const body = lambdaBodyParser(event.body);
       const params = event.pathParameters ?? {};
       const queryParams = event.queryStringParameters ?? {};
