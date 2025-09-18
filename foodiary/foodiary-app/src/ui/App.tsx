@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 
 import {
   HostGrotesk_400Regular,
@@ -6,9 +5,9 @@ import {
   HostGrotesk_600SemiBold,
   useFonts,
 } from '@expo-google-fonts/host-grotesk';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Greetings } from './screens/Greetings';
-import { theme } from './theme';
 
 export default function App() {
   const [isFontLoaded] = useFonts({
@@ -22,17 +21,10 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <Greetings />
-    </SafeAreaProvider>
+    <GestureHandlerRootView>
+      <SafeAreaProvider>
+        <Greetings />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.lime[500],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

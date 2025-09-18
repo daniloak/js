@@ -1,4 +1,4 @@
-import { theme } from '@ui/theme';
+import { theme } from '@ui/styles/theme';
 import { Text } from 'react-native';
 
 interface IAppTextProps extends React.ComponentProps<typeof Text> {
